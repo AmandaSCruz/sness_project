@@ -72,13 +72,14 @@ installEmulatorOverrides();
 
 window.EJS_ready = () => {
   status.textContent = "";
-  runOverlayGuards();
+  neutralizeEmulatorOverlay();
 };
 
 window.EJS_onGameStart = () => {
   status.textContent = "";
   closeEmulatorOverlay();
-  runOverlayGuards();
+  neutralizeEmulatorOverlay();
+  preventVirtualGamepadOverlay();
 };
 
 function installEmulatorOverrides() {
@@ -199,19 +200,31 @@ function preventVirtualGamepadOverlay() {
   });
 }
 
-function runOverlayGuards() {
-  neutralizeEmulatorOverlay();
-  preventVirtualGamepadOverlay();
+function scheduleOncePerFrame(callback) {
+  let frame = 0;
+
+  return () => {
+    if (frame) {
+      return;
+    }
+
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      callback();
+    });
+  };
 }
 
-[250, 750, 1500, 3000].forEach((delay) => {
-  setTimeout(runOverlayGuards, delay);
-});
+const scheduleVirtualGamepadGuard = scheduleOncePerFrame(preventVirtualGamepadOverlay);
+const scheduleOverlayNeutralize = scheduleOncePerFrame(neutralizeEmulatorOverlay);
 
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) {
-    runOverlayGuards();
-  }
+const observer = new MutationObserver(scheduleVirtualGamepadGuard);
+observer.observe(gameContainer, { childList: true, subtree: true });
+
+const overlayObserver = new MutationObserver(scheduleOverlayNeutralize);
+overlayObserver.observe(gameContainer, {
+  childList: true,
+  subtree: true,
 });
 
 fullscreenButton.addEventListener(
