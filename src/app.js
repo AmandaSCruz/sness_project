@@ -27,6 +27,7 @@ const gameKey =
 const game = games[gameKey];
 const status = document.getElementById("status");
 const fullscreenButton = document.getElementById("fullscreen");
+const gameContainer = document.getElementById("game");
 
 document.title = game.name;
 
@@ -199,12 +200,29 @@ function preventVirtualGamepadOverlay() {
   });
 }
 
-const observer = new MutationObserver(preventVirtualGamepadOverlay);
-observer.observe(document.getElementById("game"), { childList: true, subtree: true });
+function scheduleOncePerFrame(callback) {
+  let frame = 0;
 
-const overlayObserver = new MutationObserver(neutralizeEmulatorOverlay);
-overlayObserver.observe(document.getElementById("game"), {
-  attributes: true,
+  return () => {
+    if (frame) {
+      return;
+    }
+
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      callback();
+    });
+  };
+}
+
+const scheduleVirtualGamepadGuard = scheduleOncePerFrame(preventVirtualGamepadOverlay);
+const scheduleOverlayNeutralize = scheduleOncePerFrame(neutralizeEmulatorOverlay);
+
+const observer = new MutationObserver(scheduleVirtualGamepadGuard);
+observer.observe(gameContainer, { childList: true, subtree: true });
+
+const overlayObserver = new MutationObserver(scheduleOverlayNeutralize);
+overlayObserver.observe(gameContainer, {
   childList: true,
   subtree: true,
 });
