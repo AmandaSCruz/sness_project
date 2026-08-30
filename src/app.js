@@ -32,6 +32,8 @@ document.title = game.name;
 
 window.EJS_player = "#game";
 window.EJS_core = "snes";
+window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+window.EJS_pathToData = "https://cdn.emulatorjs.org/stable/data/";
 window.EJS_gameUrl = encodeURI(game.url);
 window.EJS_gameName = game.name;
 window.EJS_gameID = game.id;
@@ -46,6 +48,8 @@ window.EJS_alignStartButton = "center";
 window.EJS_startButtonName = "Iniciar";
 window.EJS_AdUrl = "";
 window.EJS_AdTimer = -1;
+window.EJS_AdMode = 0;
+window.EJS_AdSize = ["0", "0"];
 window.EJS_askBeforeExit = false;
 
 status.textContent = `Carregando ${game.name}...`;
