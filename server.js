@@ -23,8 +23,6 @@ const mimeTypes = {
 function send(res, statusCode, body, contentType = "text/plain; charset=utf-8") {
   res.writeHead(statusCode, {
     "Content-Type": contentType,
-    "Cross-Origin-Opener-Policy": "same-origin",
-    "Cross-Origin-Embedder-Policy": "require-corp",
   });
   res.end(body);
 }
@@ -56,12 +54,14 @@ const server = http.createServer((req, res) => {
     }
 
     const contentType = mimeTypes[path.extname(filePath).toLowerCase()] || "application/octet-stream";
+    const cacheControl = path.extname(filePath).toLowerCase() === ".html"
+      ? "no-cache"
+      : "public, max-age=3600";
+
     res.writeHead(200, {
       "Content-Type": contentType,
       "Content-Length": stat.size,
-      "Cache-Control": "public, max-age=3600",
-      "Cross-Origin-Opener-Policy": "same-origin",
-      "Cross-Origin-Embedder-Policy": "require-corp",
+      "Cache-Control": cacheControl,
     });
 
     fs.createReadStream(filePath).pipe(res);
