@@ -39,6 +39,19 @@ window.EJS_gameName = game.name;
 window.EJS_gameID = game.id;
 window.EJS_startOnLoaded = true;
 window.EJS_fullscreenOnLoaded = true;
+window.EJS_browserMode = "mobile";
+window.EJS_controlScheme = "snes";
+window.EJS_VirtualGamepadSettings = [
+  { type: "button", text: "X", id: "x", location: "right", left: 40, bold: true, input_value: 9 },
+  { type: "button", text: "Y", id: "y", location: "right", top: 40, bold: true, input_value: 1 },
+  { type: "button", text: "A", id: "a", location: "right", left: 81, top: 40, bold: true, input_value: 8 },
+  { type: "button", text: "B", id: "b", location: "right", left: 40, top: 80, bold: true, input_value: 0 },
+  { type: "dpad", id: "dpad", location: "left", left: "50%", top: "50%", joystickInput: false, inputValues: [4, 5, 6, 7] },
+  { type: "button", text: "Start", id: "start", location: "center", left: 60, fontSize: 15, block: true, input_value: 3 },
+  { type: "button", text: "Select", id: "select", location: "center", left: -5, fontSize: 15, block: true, input_value: 2 },
+  { type: "button", text: "L", id: "l", location: "left", left: 3, top: -100, bold: true, block: true, input_value: 10 },
+  { type: "button", text: "R", id: "r", location: "right", right: 3, top: -100, bold: true, block: true, input_value: 11 },
+];
 window.EJS_mouse = false;
 window.EJS_multitap = true;
 window.EJS_language = "pt-BR";
@@ -60,8 +73,21 @@ window.EJS_ready = () => {
 
 window.EJS_onGameStart = () => {
   status.textContent = "";
+  closeEmulatorOverlay();
   preventVirtualGamepadOverlay();
 };
+
+function closeEmulatorOverlay() {
+  const close = () => {
+    window.EJS_emulator?.menu?.close?.();
+    window.EJS_emulator?.closePopup?.();
+  };
+
+  close();
+  setTimeout(close, 100);
+  setTimeout(close, 500);
+  setTimeout(close, 1000);
+}
 
 function preventVirtualGamepadOverlay() {
   const selectors = [

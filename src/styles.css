@@ -54,6 +54,12 @@ body {
   display: none !important;
 }
 
+#game .ejs_menu_bar,
+#game .ejs_popup_container,
+#game .ejs_context_menu {
+  display: none !important;
+}
+
 #game .ejs_virtualGamepad_left,
 #game .ejs_virtualGamepad_right,
 #game .ejs_virtualGamepad_top,
