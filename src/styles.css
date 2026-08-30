@@ -56,16 +56,36 @@ body {
 
 #game .ejs_menu_bar,
 #game .ejs_popup_container,
-#game .ejs_context_menu {
+#game .ejs_context_menu,
+#game .ejs_control_menu,
+#game .ejs_settings,
+#game .ejs_settings_menu,
+#game .ejs_virtualGamepad_open {
   display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#game .ejs_virtualGamepad_parent {
+  z-index: 2147483647 !important;
+  pointer-events: none !important;
 }
 
 #game .ejs_virtualGamepad_left,
 #game .ejs_virtualGamepad_right,
 #game .ejs_virtualGamepad_top,
 #game .ejs_virtualGamepad_bottom {
+  z-index: 2147483647 !important;
   background: transparent !important;
   box-shadow: none !important;
+  pointer-events: none !important;
+}
+
+#game .ejs_virtualGamepad_button,
+#game .ejs_dpad_main,
+#game .ejs_dpad_main * {
+  pointer-events: auto !important;
+  z-index: 2147483647 !important;
 }
 
 #fullscreen {

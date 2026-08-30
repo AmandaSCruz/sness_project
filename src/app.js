@@ -88,9 +88,18 @@ function installEmulatorOverrides() {
     #game .ejs_ad_iframe,
     #game .ejs_popup_container,
     #game .ejs_context_menu,
-    #game .ejs_menu_bar {
+    #game .ejs_menu_bar,
+    #game .ejs_control_menu,
+    #game .ejs_settings,
+    #game .ejs_settings_menu,
+    #game .ejs_virtualGamepad_open {
       display: none !important;
       opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    #game .ejs_virtualGamepad_parent {
+      z-index: 2147483647 !important;
       pointer-events: none !important;
     }
 
@@ -98,8 +107,17 @@ function installEmulatorOverrides() {
     #game .ejs_virtualGamepad_right,
     #game .ejs_virtualGamepad_top,
     #game .ejs_virtualGamepad_bottom {
+      z-index: 2147483647 !important;
       background: transparent !important;
       box-shadow: none !important;
+      pointer-events: none !important;
+    }
+
+    #game .ejs_virtualGamepad_button,
+    #game .ejs_dpad_main,
+    #game .ejs_dpad_main * {
+      pointer-events: auto !important;
+      z-index: 2147483647 !important;
     }
   `;
   document.head.appendChild(style);
@@ -108,7 +126,7 @@ function installEmulatorOverrides() {
 function neutralizeEmulatorOverlay() {
   document
     .querySelectorAll(
-      "#game .ejs_ad_iframe, #game .ejs_popup_container, #game .ejs_context_menu, #game .ejs_menu_bar"
+      "#game .ejs_ad_iframe, #game .ejs_popup_container, #game .ejs_context_menu, #game .ejs_menu_bar, #game .ejs_control_menu, #game .ejs_settings, #game .ejs_settings_menu, #game .ejs_virtualGamepad_open"
     )
     .forEach((element) => {
       element.style.setProperty("display", "none", "important");
@@ -121,8 +139,24 @@ function neutralizeEmulatorOverlay() {
       "#game .ejs_virtualGamepad_left, #game .ejs_virtualGamepad_right, #game .ejs_virtualGamepad_top, #game .ejs_virtualGamepad_bottom"
     )
     .forEach((element) => {
+      element.style.setProperty("z-index", "2147483647", "important");
       element.style.setProperty("background", "transparent", "important");
       element.style.setProperty("box-shadow", "none", "important");
+      element.style.setProperty("pointer-events", "none", "important");
+    });
+
+  document
+    .querySelectorAll("#game .ejs_virtualGamepad_parent")
+    .forEach((element) => {
+      element.style.setProperty("z-index", "2147483647", "important");
+      element.style.setProperty("pointer-events", "none", "important");
+    });
+
+  document
+    .querySelectorAll("#game .ejs_virtualGamepad_button, #game .ejs_dpad_main, #game .ejs_dpad_main *")
+    .forEach((element) => {
+      element.style.setProperty("z-index", "2147483647", "important");
+      element.style.setProperty("pointer-events", "auto", "important");
     });
 }
 
@@ -176,16 +210,17 @@ overlayObserver.observe(document.getElementById("game"), {
 });
 
 fullscreenButton.addEventListener(
-  "click",
+  "pointerdown",
   async () => {
+    fullscreenButton.style.pointerEvents = "none";
+    fullscreenButton.remove();
+
     try {
       if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
         await document.documentElement.requestFullscreen();
       }
     } catch {
       status.textContent = "";
-    } finally {
-      fullscreenButton.remove();
     }
   },
   { once: true }
