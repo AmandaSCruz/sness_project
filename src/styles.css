@@ -48,6 +48,20 @@ body {
   background: #000;
 }
 
+#game .ejs_ad_iframe,
+#game iframe[src*="ads"],
+#game iframe[src*="ad"] {
+  display: none !important;
+}
+
+#game .ejs_virtualGamepad_left,
+#game .ejs_virtualGamepad_right,
+#game .ejs_virtualGamepad_top,
+#game .ejs_virtualGamepad_bottom {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 #fullscreen {
   position: fixed;
   inset: 0;

@@ -60,7 +60,38 @@ window.EJS_ready = () => {
 
 window.EJS_onGameStart = () => {
   status.textContent = "";
+  preventVirtualGamepadOverlay();
 };
+
+function preventVirtualGamepadOverlay() {
+  const selectors = [
+    ".ejs_virtualGamepad_left",
+    ".ejs_virtualGamepad_right",
+    ".ejs_virtualGamepad_top",
+    ".ejs_virtualGamepad_bottom",
+  ];
+
+  document.querySelectorAll(selectors.join(",")).forEach((element) => {
+    if (element.dataset.snessTouchGuard === "true") {
+      return;
+    }
+
+    element.dataset.snessTouchGuard = "true";
+    element.addEventListener(
+      "touchstart",
+      (event) => {
+        if (event.target === element) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      },
+      { passive: false }
+    );
+  });
+}
+
+const observer = new MutationObserver(preventVirtualGamepadOverlay);
+observer.observe(document.getElementById("game"), { childList: true, subtree: true });
 
 fullscreenButton.addEventListener(
   "click",
