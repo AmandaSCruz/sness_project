@@ -67,15 +67,64 @@ window.EJS_askBeforeExit = false;
 
 status.textContent = `Carregando ${game.name}...`;
 
+installEmulatorOverrides();
+
 window.EJS_ready = () => {
   status.textContent = "";
+  neutralizeEmulatorOverlay();
 };
 
 window.EJS_onGameStart = () => {
   status.textContent = "";
   closeEmulatorOverlay();
+  neutralizeEmulatorOverlay();
   preventVirtualGamepadOverlay();
 };
+
+function installEmulatorOverrides() {
+  const style = document.createElement("style");
+  style.id = "sness-emulator-overrides";
+  style.textContent = `
+    #game .ejs_ad_iframe,
+    #game .ejs_popup_container,
+    #game .ejs_context_menu,
+    #game .ejs_menu_bar {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    #game .ejs_virtualGamepad_left,
+    #game .ejs_virtualGamepad_right,
+    #game .ejs_virtualGamepad_top,
+    #game .ejs_virtualGamepad_bottom {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function neutralizeEmulatorOverlay() {
+  document
+    .querySelectorAll(
+      "#game .ejs_ad_iframe, #game .ejs_popup_container, #game .ejs_context_menu, #game .ejs_menu_bar"
+    )
+    .forEach((element) => {
+      element.style.setProperty("display", "none", "important");
+      element.style.setProperty("opacity", "0", "important");
+      element.style.setProperty("pointer-events", "none", "important");
+    });
+
+  document
+    .querySelectorAll(
+      "#game .ejs_virtualGamepad_left, #game .ejs_virtualGamepad_right, #game .ejs_virtualGamepad_top, #game .ejs_virtualGamepad_bottom"
+    )
+    .forEach((element) => {
+      element.style.setProperty("background", "transparent", "important");
+      element.style.setProperty("box-shadow", "none", "important");
+    });
+}
 
 function closeEmulatorOverlay() {
   const close = () => {
@@ -118,6 +167,13 @@ function preventVirtualGamepadOverlay() {
 
 const observer = new MutationObserver(preventVirtualGamepadOverlay);
 observer.observe(document.getElementById("game"), { childList: true, subtree: true });
+
+const overlayObserver = new MutationObserver(neutralizeEmulatorOverlay);
+overlayObserver.observe(document.getElementById("game"), {
+  attributes: true,
+  childList: true,
+  subtree: true,
+});
 
 fullscreenButton.addEventListener(
   "click",

@@ -53,9 +53,10 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    const contentType = mimeTypes[path.extname(filePath).toLowerCase()] || "application/octet-stream";
-    const cacheControl = path.extname(filePath).toLowerCase() === ".html"
-      ? "no-cache"
+    const extension = path.extname(filePath).toLowerCase();
+    const contentType = mimeTypes[extension] || "application/octet-stream";
+    const cacheControl = [".html", ".css", ".js"].includes(extension)
+      ? "no-store"
       : "public, max-age=3600";
 
     res.writeHead(200, {
